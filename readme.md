@@ -81,6 +81,14 @@ findAndReplaceDOMText(/foo/g, myElement, 'span', null, function(el) {
 });
 ```
 
+If you want to replace the match with new text, use the `findAndReplaceDOMText.replaceTextHandler` function like so:
+
+```js
+var search = 'foo';
+var replace = 'bar';
+var handler = findAndReplaceDOMText.replaceTextHandler(replace);
+findAndReplaceDOMText(new RegExp(search, 'g'), myElement, handler);
+```
 ### Changelog
 
  * 0.3.0: Switch to semver, add node-filtering feature (as requested in [Issue #11](https://github.com/padolsey/findAndReplaceDOMText/issues/11)
