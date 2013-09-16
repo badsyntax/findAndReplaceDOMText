@@ -19,9 +19,9 @@
  */
 window.findAndReplaceDOMText = (function() {
 
-  /** 
+  /**
    * findAndReplaceDOMText
-   * 
+   *
    * Locates matches and replaces with replacementNode
    *
    * @param {RegExp} regex The regular expression to match
@@ -62,9 +62,9 @@ window.findAndReplaceDOMText = (function() {
   function _getMatchIndexes(m, captureGroup) {
 
     captureGroup = captureGroup || 0;
- 
+
     if (!m[0]) throw 'findAndReplaceDOMText cannot handle zero-length matches';
- 
+
     var index = m.index;
 
     if (captureGroup > 0) {
@@ -101,7 +101,7 @@ window.findAndReplaceDOMText = (function() {
 
   }
 
-  /** 
+  /**
    * Steps through the target node, looking for matches, and
    * calling replaceFn when a match is found.
    */
@@ -154,7 +154,7 @@ window.findAndReplaceDOMText = (function() {
           matchIndex: matchIndex
         });
         // replaceFn has to return the node that replaced the endNode
-        // and then we step back so we can continue from the end of the 
+        // and then we step back so we can continue from the end of the
         // match:
         atIndex -= (endNode.length - endNodeIndex);
         startNode = null;
@@ -201,7 +201,7 @@ window.findAndReplaceDOMText = (function() {
     reverts = [];
   };
 
-  /** 
+  /**
    * Generates the actual replaceFn which splits up text nodes
    * and inserts the replacement element.
    */
@@ -302,6 +302,39 @@ window.findAndReplaceDOMText = (function() {
     };
 
   }
+
+  /**
+   * A replace text handler that replaces text in the DOM without using a
+   * wrapper element.
+   */
+  findAndReplaceDOMText.replaceTextHandler = function(newtext){
+
+    var originalNewText = newtext;
+    var replaced;
+    var replaceFill;
+    var c;
+
+    return function(fill, i, search) {
+
+      // A new match.
+      if (i !== c) {
+        c = i;
+        newtext = originalNewText;
+        replaced = '';
+      }
+
+      replaceFill = newtext.substr(0, fill.length);
+      newtext = newtext.substr(fill.length);
+      replaced += fill;
+
+      // Add remaining text to last node.
+      if (replaced === search) {
+        replaceFill += newtext;
+      }
+
+      return document.createTextNode(replaceFill);
+    };
+  };
 
   return findAndReplaceDOMText;
 

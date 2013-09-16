@@ -153,11 +153,32 @@ test('Element filtering', function() {
 	htmlEqual(d.innerHTML, '<span>foo</span> <style>foo{}</style> <span>foo</span> <script>foo;</script>');
 
 	d.innerHTML = html;
-	
+
 	findAndReplaceDOMText(/foo/g, d, 'span', null, function(el) {
 		return 'script' !== el.nodeName.toLowerCase();
 	});
 	// (Only script tag blocked:)
 	htmlEqual(d.innerHTML, '<span>foo</span> <style><span>foo</span>{}</style> <span>foo</span> <script>foo;</script>');
 
+});
+
+test('Replace text with new text', function() {
+
+  var html, d, search, replace;
+
+  html = 'foo <em>fo</em>o <strong>foo</strong>hello foobar';
+  d = document.createElement('div');
+  d.innerHTML = html;
+  search = 'foo';
+  replace = 'bar';
+  findAndReplaceDOMText(new RegExp(search, 'g'), d, findAndReplaceDOMText.replaceTextHandler(replace));
+  htmlEqual(d.innerHTML, 'bar <em>ba</em>r <strong>bar</strong>hello barbar');
+
+  html = 'Я люблю ко<em>ш</em>ек. кошек мило.';
+  d = document.createElement('div');
+  d.innerHTML = html;
+  search = 'кошек';
+  replace = 'собак';
+  findAndReplaceDOMText(new RegExp(search, 'g'), d, findAndReplaceDOMText.replaceTextHandler(replace));
+  htmlEqual(d.innerHTML, 'Я люблю со<em>б</em>ак. собак мило.');
 });
